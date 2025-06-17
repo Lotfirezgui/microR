@@ -1,43 +1,43 @@
-# Micro-framework PHP « microR »
+# PHP Micro-framework "microR"
 
-## Présentation
+## Overview
 
-`microR.php` est un micro-framework PHP en un seul fichier, intégrant :
-- Sécurité (XSS, CSRF, CORS, HTTPS)
-- ORM minimal sécurisé
-- ACL (contrôle d’accès par rôles)
-- Routage simple (avec routes paramétrées)
-- Templating avec protection XSS
-- Autoload de classes
+`microR.php` is a single-file PHP micro-framework, featuring:
+- Security (XSS, CSRF, CORS, HTTPS)
+- Minimal secure ORM
+- ACL (role-based access control)
+- Simple routing (with parameterized routes)
+- Templating with XSS protection
+- Class autoloading
 
 ---
 
-## 1. Sécurité
+## 1. Security
 
 ### XSS
-Toutes les variables injectées dans les templates via `render` sont automatiquement échappées.
+All variables injected into templates via `render` are automatically escaped.
 
 ```php
 $safe = MicroR::sanitize($input);
 ```
 
 ### CSRF
-Génère un token à placer dans les formulaires et vérifie à la soumission.
+Generates a token to place in forms and verifies it on submission.
 
 ```php
-$token = MicroR::csrfToken(); // À placer dans un champ caché
+$token = MicroR::csrfToken(); // To be placed in a hidden field
 if (!MicroR::checkCsrf($_POST['csrf_token'])) die('CSRF!');
 ```
 
 ### CORS
-Active les headers CORS pour les API.
+Enables CORS headers for APIs.
 
 ```php
-MicroR::enableCORS(['https://mon-domaine.com']);
+MicroR::enableCORS(['https://my-domain.com']);
 ```
 
-### Forcer HTTPS
-Redirige automatiquement vers HTTPS.
+### Force HTTPS
+Automatically redirects to HTTPS.
 
 ```php
 MicroR::forceHTTPS();
@@ -45,62 +45,62 @@ MicroR::forceHTTPS();
 
 ---
 
-## 2. ORM Minimal
+## 2. Minimal ORM
 
-### Connexion
+### Connection
 ```php
 $mf = new MicroR('mysql:host=localhost;dbname=test', 'root', '');
 ```
 
-### Requête SELECT
+### SELECT Query
 ```php
 $users = $mf->find('users', ['id' => 1]);
 ```
 
-### Insertion
+### Insert
 ```php
 $mf->save('users', ['name' => 'Alice', 'email' => 'alice@mail.com']);
 ```
 
-### Recherche textuelle
+### Text Search
 ```php
 $users = $mf->search('users', ['name' => 'ali']);
 ```
 
 ---
 
-## 3. ACL (Contrôle d’accès)
+## 3. ACL (Access Control List)
 
-### Définir un rôle et une permission
+### Define a role and permission
 ```php
 $mf->addRole('admin');
 $mf->allow('admin', 'edit');
 ```
 
-### Vérifier l’accès
+### Check access
 ```php
 if ($mf->isAllowed('admin', 'edit')) { /* ... */ }
 ```
 
 ---
 
-## 4. Routage
+## 4. Routing
 
-### Déclarer une route simple
+### Define a simple route
 ```php
-MicroR::route('GET', '/accueil', function() {
-    echo 'Bienvenue !';
+MicroR::route('GET', '/home', function() {
+    echo 'Welcome!';
 });
 ```
 
-### Déclarer une route paramétrée
+### Define a parameterized route
 ```php
 MicroR::route('GET', '/user/{id}', function($id) {
-    echo "Profil de l'utilisateur #$id";
+    echo "User profile #$id";
 });
 ```
 
-### Dispatcher les routes
+### Dispatch routes
 ```php
 MicroR::dispatch();
 ```
@@ -109,29 +109,29 @@ MicroR::dispatch();
 
 ## 5. Templating
 
-### Afficher une vue avec variables protégées XSS
+### Render a view with XSS-protected variables
 ```php
 MicroR::render('template.html', ['user' => $users[0]->name, 'csrf' => MicroR::csrfToken()]);
 ```
 
-Dans le template HTML :
+In the HTML template:
 ```html
-<h1>Bonjour <?= $user ?></h1>
+<h1>Hello <?= $user ?></h1>
 <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 ```
 
 ---
 
-## 6. Autoload de classes
+## 6. Class Autoloading
 
-### Charger toutes les classes d’un dossier
+### Load all classes from a folder
 ```php
-MicroR::loadClasses(__DIR__ . '/monDossierClasses');
+MicroR::loadClasses(__DIR__ . '/myClassesFolder');
 ```
 
 ---
 
-## Exemple complet
+## Complete Example
 
 **index.php**
 ```php
@@ -148,7 +148,7 @@ MicroR::route('GET', '/', function() {
 });
 
 MicroR::route('GET', '/user/{id}', function($id) {
-    echo "Profil de l'utilisateur #$id";
+    echo "User profile #$id";
 });
 
 MicroR::dispatch();
@@ -157,16 +157,16 @@ MicroR::dispatch();
 **template.html**
 ```html
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Accueil</title>
+    <title>Home</title>
 </head>
 <body>
-    <h1>Bonjour <?= $user ?></h1>
+    <h1>Hello <?= $user ?></h1>
     <form method="post">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-        <button type="submit">Envoyer</button>
+        <button type="submit">Send</button>
     </form>
 </body>
 </html>
@@ -175,11 +175,11 @@ MicroR::dispatch();
 ---
 
 ## Notes
-- Toutes les variables injectées dans les templates sont automatiquement protégées contre les attaques XSS.
-- Le token CSRF doit être vérifié lors de la soumission d’un formulaire.
-- Le routage permet de créer des applications web simples et sécurisées, y compris avec des paramètres dynamiques.
-- L’ORM est protégé contre l’injection SQL par validation des noms de tables et champs, et requêtes préparées.
+- All variables injected into templates are automatically protected against XSS attacks.
+- The CSRF token must be checked when submitting a form.
+- Routing allows you to create simple and secure web applications, including with dynamic parameters.
+- The ORM is protected against SQL injection by validating table/field names and using prepared statements.
 
 ---
 
-Pour toute question ou extension, consulte le code source ou demande de l’aide !
+For any questions or extensions, check the source code or ask for help!
