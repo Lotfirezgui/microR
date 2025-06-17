@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Démo microR</title>
+</head>
+<body>
+    <h1>Bonjour <?= isset($user) ? $user : 'Invité' ?></h1>
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="<?= isset($csrf) ? $csrf : '' ?>">
+        <button type="submit">Envoyer</button>
+    </form>
+</body>
+</html>
